@@ -1,7 +1,8 @@
 package hu.csomorbalazs.mydiary
 
-import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import hu.csomorbalazs.mydiary.adapter.DiaryEntryAdapter
@@ -17,6 +18,14 @@ class MainListActivity : AppCompatActivity(), DiaryEntryDialog.DiaryEntryHandler
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_diary_entries)
 
+        setSupportActionBar(toolbar)
+        toolbar.setOnMenuItemClickListener { item ->
+            if (item.itemId == R.id.btnMap) {
+                startActivity(Intent(this, MapsActivity::class.java))
+            }
+
+            true
+        }
 
         fabAdd.setOnClickListener {
             DiaryEntryDialog().show(supportFragmentManager, "DIARY_DIALOG")
@@ -35,6 +44,12 @@ class MainListActivity : AppCompatActivity(), DiaryEntryDialog.DiaryEntryHandler
         }
 
         initRecyclerView()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean { // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+
+        return true
     }
 
     private fun initRecyclerView() {
