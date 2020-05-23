@@ -1,24 +1,40 @@
 package hu.csomorbalazs.mydiary
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.RadioButton
+import android.widget.Toast
+import androidx.core.content.PermissionChecker
+import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.fragment.app.DialogFragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import hu.csomorbalazs.mydiary.data.DiaryEntry
 import kotlinx.android.synthetic.main.diary_entry_dialog.view.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class DiaryEntryDialog : DialogFragment() {
+    companion object {
+        private const val LOCATION_SETTINGS_REQUEST = 1441
+    }
 
     interface DiaryEntryHandler {
+
         fun diaryEntryCreated(diaryEntry: DiaryEntry)
     }
 
+    lateinit var client: FusedLocationProviderClient
     lateinit var diaryEntryHandler: DiaryEntryHandler
 
     override fun onAttach(context: Context) {
@@ -33,11 +49,12 @@ class DiaryEntryDialog : DialogFragment() {
         }
     }
 
-    lateinit var rbPersonal: RadioButton
-    lateinit var etTitle: EditText
-    lateinit var etDescription: EditText
-    lateinit var etDate: EditText
-    lateinit var etPlace: EditText
+    private lateinit var rbPersonal: RadioButton
+    private lateinit var etTitle: EditText
+    private lateinit var etDescription: EditText
+    private lateinit var etDate: EditText
+    private lateinit var etPlace: EditText
+    private lateinit var btnLocation: ImageButton
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -51,6 +68,7 @@ class DiaryEntryDialog : DialogFragment() {
         etDescription = dialogView.etDescription
         etDate = dialogView.etDate
         etPlace = dialogView.etPlace
+        btnLocation = dialogView.btnLocation
 
         val now = LocalDate.now()
 
@@ -75,6 +93,9 @@ class DiaryEntryDialog : DialogFragment() {
 
         dialogBuilder.setView(dialogView)
         dialogBuilder.setPositiveButton("Create") { _, _ -> }
+
+        client = LocationServices.getFusedLocationProviderClient(requireActivity())
+        btnLocation.setOnClickListener { tryToGetLocation() }
 
         return dialogBuilder.create()
     }
@@ -118,6 +139,96 @@ class DiaryEntryDialog : DialogFragment() {
                 etPlace.text.toString()
             )
         )
+    }
+
+    private fun tryToGetLocation() {
+        if (!hasLocationPermission()) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            return
+        } else if (!isGpsEnabled() && !isNetworkEnabled()) {
+            Log.v("LOG_TAG", "Jéééébis")
+            askToTurnLocationServicesOn()
+        } else {
+            getLocation()
+        }
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        return checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PermissionChecker.PERMISSION_GRANTED
+                || checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PermissionChecker.PERMISSION_GRANTED
+    }
+
+    private fun getLocation() {
+        client.lastLocation.addOnSuccessListener { location ->
+            etPlace.setText("${location.latitude}, ${location.longitude}")
+        }
+    }
+
+    private fun isGpsEnabled(): Boolean {
+        val lm: LocationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var gpsEnabled = false
+
+        try {
+            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        } catch (ex: Exception) {
+        }
+
+        return gpsEnabled
+    }
+
+    private fun isNetworkEnabled(): Boolean {
+        val lm: LocationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var networkEnabled = false
+
+        try {
+            networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        } catch (ex: Exception) {
+        }
+
+        return networkEnabled
+    }
+
+    private fun askToTurnLocationServicesOn() {
+        if (!isGpsEnabled() && !isNetworkEnabled()) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Enable location")
+                .setMessage("Location services should be enabled to use this feature")
+                .setPositiveButton(
+                    "Open location settings"
+                ) { _, _ ->
+                    requireActivity().startActivityForResult(
+                        Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS
+                        ), LOCATION_SETTINGS_REQUEST
+                    )
+                }
+                .setNegativeButton("Cancel") { _, _ -> }
+                .show()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (grantResults.all { result -> result == PermissionChecker.PERMISSION_GRANTED }) {
+            getLocation()
+        } else {
+            Toast.makeText(
+                requireActivity(),
+                "Location permission is required for this feature",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
 }
