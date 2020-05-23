@@ -9,7 +9,6 @@ import android.content.Intent
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RadioButton
@@ -21,8 +20,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import hu.csomorbalazs.mydiary.data.DiaryEntry
 import kotlinx.android.synthetic.main.diary_entry_dialog.view.*
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DiaryEntryDialog : DialogFragment() {
     companion object {
@@ -36,6 +36,9 @@ class DiaryEntryDialog : DialogFragment() {
 
     lateinit var client: FusedLocationProviderClient
     lateinit var diaryEntryHandler: DiaryEntryHandler
+
+    private val dateFormat: DateFormat = SimpleDateFormat.getDateInstance()
+    private var selectedDate: Calendar = Calendar.getInstance()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -70,22 +73,24 @@ class DiaryEntryDialog : DialogFragment() {
         etPlace = dialogView.etPlace
         btnLocation = dialogView.btnLocation
 
-        val now = LocalDate.now()
-
-        etDate.setText(now.format(DateTimeFormatter.ISO_LOCAL_DATE))
+        etDate.setText(dateFormat.format(selectedDate.time))
 
         dialogView.etDate.setOnClickListener {
             val picker = DatePickerDialog(
                 requireContext(),
                 DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                    selectedDate = Calendar.getInstance()
+                        .apply {
+                            set(year, month, dayOfMonth)
+                        }
+
                     etDate.setText(
-                        LocalDate.of(
-                            year,
-                            month,
-                            dayOfMonth
-                        ).format(DateTimeFormatter.ISO_LOCAL_DATE)
+                        dateFormat.format(selectedDate.time)
                     )
-                }, now.year, now.monthValue, now.dayOfMonth
+                },
+                selectedDate.get(Calendar.YEAR),
+                selectedDate.get(Calendar.MONTH),
+                selectedDate.get(Calendar.DAY_OF_MONTH)
             )
 
             picker.show()
@@ -123,16 +128,10 @@ class DiaryEntryDialog : DialogFragment() {
     }
 
     private fun handleDiaryEntryCreate() {
-        val date = if (etDate.text.isNullOrEmpty()) {
-            LocalDate.now()
-        } else {
-            LocalDate.parse(etDate.text.toString(), DateTimeFormatter.ISO_LOCAL_DATE)
-        }
-
         diaryEntryHandler.diaryEntryCreated(
             DiaryEntry(
                 null,
-                date,
+                selectedDate.timeInMillis,
                 etTitle.text.toString(),
                 etDescription.text.toString(),
                 rbPersonal.isChecked,
@@ -146,7 +145,6 @@ class DiaryEntryDialog : DialogFragment() {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
             return
         } else if (!isGpsEnabled() && !isNetworkEnabled()) {
-            Log.v("LOG_TAG", "Jéééébis")
             askToTurnLocationServicesOn()
         } else {
             getLocation()

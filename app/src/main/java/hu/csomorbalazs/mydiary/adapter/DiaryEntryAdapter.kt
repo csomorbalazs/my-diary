@@ -13,12 +13,15 @@ import hu.csomorbalazs.mydiary.R
 import hu.csomorbalazs.mydiary.data.AppDatabase
 import hu.csomorbalazs.mydiary.data.DiaryEntry
 import kotlinx.android.synthetic.main.diary_entry_card.view.*
-import java.time.format.DateTimeFormatter
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DiaryEntryAdapter(private val context: Context, diaryEntryList: List<DiaryEntry>) :
     RecyclerView.Adapter<DiaryEntryAdapter.ViewHolder>() {
 
     private var diaryEntries = mutableListOf<DiaryEntry>()
+    private val dateFormat: DateFormat = SimpleDateFormat.getDateInstance()
 
     init {
         diaryEntries.addAll(diaryEntryList)
@@ -41,8 +44,13 @@ class DiaryEntryAdapter(private val context: Context, diaryEntryList: List<Diary
 
         holder.tvTitle.text = diaryEntry.title
         holder.tvDescription.text = diaryEntry.description
-        holder.tvCreationDate.text =
-            diaryEntry.creationDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
+
+        val date: Calendar = Calendar.getInstance()
+            .apply {
+                timeInMillis = diaryEntry.creationDate
+            }
+
+        holder.tvCreationDate.text = dateFormat.format(date.time)
         holder.tvPlace.text = diaryEntry.place
 
         if (diaryEntry.isPersonal) {
