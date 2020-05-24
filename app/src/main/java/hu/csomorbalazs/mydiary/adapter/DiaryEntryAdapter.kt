@@ -1,6 +1,7 @@
 package hu.csomorbalazs.mydiary.adapter
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,6 +67,13 @@ class DiaryEntryAdapter(private val context: Context, diaryEntryList: List<Diary
         holder.btnDelete.setOnClickListener {
             deleteDiaryEntry(holder.adapterPosition)
         }
+
+        if (!diaryEntry.imagePath.isNullOrEmpty()) {
+            holder.ivImage.setImageBitmap(
+                BitmapFactory.decodeFile(diaryEntry.imagePath)
+            )
+            holder.ivImage.visibility = View.VISIBLE
+        }
     }
 
     fun addDiaryEntry(diaryEntry: DiaryEntry) {
@@ -97,6 +105,8 @@ class DiaryEntryAdapter(private val context: Context, diaryEntryList: List<Diary
         val tvDescription: TextView = itemView.tvDescription
         val tvCreationDate: TextView = itemView.tvCreationDate
         val tvPlace: TextView = itemView.tvPlace
+
+        val ivImage: ImageView = itemView.ivImage
 
         val ivType: ImageView = itemView.ivType
         val ivLocation: ImageView = itemView.ivLocation

@@ -11,5 +11,6 @@ data class DiaryEntry(
     @ColumnInfo(name = "title") var title: String,
     @ColumnInfo(name = "description") var description: String,
     @ColumnInfo(name = "is_personal") var isPersonal: Boolean = true,
-    @ColumnInfo(name = "place") var place: String? = null
+    @ColumnInfo(name = "place") var place: String? = null,
+    @ColumnInfo(name = "image_path") var imagePath: String? = null
 )
