@@ -90,7 +90,7 @@ class DiaryEntryDialog : DialogFragment() {
         dialogView.etDate.setOnClickListener {
             val picker = DatePickerDialog(
                 requireContext(),
-                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                     selectedDate = Calendar.getInstance()
                         .apply {
                             set(year, month, dayOfMonth)
@@ -109,7 +109,7 @@ class DiaryEntryDialog : DialogFragment() {
         }
 
         dialogBuilder.setView(dialogView)
-        dialogBuilder.setPositiveButton("Create") { _, _ -> }
+        dialogBuilder.setPositiveButton(getString(R.string.create)) { _, _ -> }
 
         client = LocationServices.getFusedLocationProviderClient(requireActivity())
         btnLocation.setOnClickListener { tryToGetLocation() }
@@ -131,12 +131,12 @@ class DiaryEntryDialog : DialogFragment() {
                 } else {
                     if (etTitle.text.isNullOrEmpty()) {
                         etTitle.error =
-                            "The title can not be empty"
+                            getString(R.string.title_cant_be_empty)
                     }
 
                     if (etDescription.text.isNullOrEmpty()) {
                         etDescription.error =
-                            "The description can not be empty"
+                            getString(R.string.desc_cant_be_empty)
                     }
                 }
             }
@@ -183,7 +183,13 @@ class DiaryEntryDialog : DialogFragment() {
 
     private fun getLocation() {
         client.lastLocation.addOnSuccessListener { location ->
-            etPlace.setText("${location.latitude}, ${location.longitude}")
+            etPlace.setText(
+                String.format(
+                    getString(R.string.coordinates),
+                    location.latitude,
+                    location.longitude
+                )
+            )
         }
     }
 
@@ -216,10 +222,10 @@ class DiaryEntryDialog : DialogFragment() {
     private fun askToTurnLocationServicesOn() {
         if (!isGpsEnabled() && !isNetworkEnabled()) {
             AlertDialog.Builder(requireContext())
-                .setTitle("Enable location")
-                .setMessage("Location services should be enabled to use this feature")
+                .setTitle(getString(R.string.enable_location))
+                .setMessage(getString(R.string.enable_location_message))
                 .setPositiveButton(
-                    "Open location settings"
+                    getString(R.string.open_location_settings)
                 ) { _, _ ->
                     requireActivity().startActivityForResult(
                         Intent(
@@ -227,7 +233,7 @@ class DiaryEntryDialog : DialogFragment() {
                         ), LOCATION_SETTINGS_REQUEST
                     )
                 }
-                .setNegativeButton("Cancel") { _, _ -> }
+                .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
                 .show()
         }
     }
@@ -272,7 +278,7 @@ class DiaryEntryDialog : DialogFragment() {
                 } else {
                     Toast.makeText(
                         requireActivity(),
-                        "Location permission is required for this feature",
+                        getString(R.string.location_required_message),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -284,7 +290,7 @@ class DiaryEntryDialog : DialogFragment() {
                 } else {
                     Toast.makeText(
                         requireActivity(),
-                        "Camera and storage permissions are required for this feature",
+                        getString(R.string.camera_storage_required_message),
                         Toast.LENGTH_LONG
                     ).show()
                 }

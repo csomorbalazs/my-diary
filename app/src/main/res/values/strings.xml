@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">My Diary</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="delete_all_warning">This action will delete all entries in your diary</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="title_cant_be_empty">The title can not be empty</string>
+    <string name="desc_cant_be_empty">The description can not be empty</string>
+    <string name="coordinates">%1s, %2s</string>
+    <string name="enable_location">Enable location</string>
+    <string name="enable_location_message">Location services should be enabled to use this feature</string>
+    <string name="open_location_settings">Open location settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="location_required_message">Location permission is required for this feature</string>
+    <string name="camera_storage_required_message">Camera and storage permissions are required for this feature</string>
+    <string name="create">Create</string>
+    <string name="logo">Logo</string>
+    <string name="attached_image">Attached image</string>
+    <string name="type_of_diary_entry">Type of diary entry</string>
+    <string name="delete_button">Delete button</string>
+    <string name="location_icon">Location icon</string>
+    <string name="date_icon">Date icon</string>
+    <string name="add_new_entry">Add a new entry to your diary</string>
+    <string name="personal">Personal</string>
+    <string name="work">Work</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="creation_date">Creation date</string>
+    <string name="place">Place</string>
+    <string name="add_gps_location">Add GPS location</string>
+    <string name="add_image_button">Add image button</string>
+    <string name="add_image">Add image</string>
 </resources>

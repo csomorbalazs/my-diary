@@ -33,12 +33,12 @@ class MainListActivity : AppCompatActivity(), DiaryEntryDialog.DiaryEntryHandler
 
         fabDeleteAll.setOnClickListener {
             val alertDialog = AlertDialog.Builder(this)
-                .setTitle("Are you sure?")
-                .setMessage("This action will delete all entries in your diary")
-                .setPositiveButton("Yes") { _, _ ->
+                .setTitle(getString(R.string.are_you_sure))
+                .setMessage(getString(R.string.delete_all_warning))
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
                     deleteAllDiaryEntries()
                 }
-                .setNegativeButton("No") { _, _ -> }
+                .setNegativeButton(getString(R.string.no)) { _, _ -> }
 
             alertDialog.show()
         }
@@ -46,7 +46,7 @@ class MainListActivity : AppCompatActivity(), DiaryEntryDialog.DiaryEntryHandler
         initRecyclerView()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean { // Inflate the menu; this adds items to the action bar if it is present.
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
 
         return true

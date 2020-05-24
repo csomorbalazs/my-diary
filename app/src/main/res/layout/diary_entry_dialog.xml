@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Add a new entry to your diary"
+        android:text="@string/add_new_entry"
         android:textAlignment="center"
         android:textColor="#000"
         android:textSize="20sp" />
@@ -27,20 +27,20 @@
             android:id="@+id/rbPersonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Personal" />
+            android:text="@string/personal" />
 
         <RadioButton
             android:id="@+id/rbWork"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Work" />
+            android:text="@string/work" />
     </RadioGroup>
 
     <EditText
         android:id="@+id/etTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title"
+        android:hint="@string/title"
         android:importantForAutofill="no"
         android:inputType="text" />
 
@@ -49,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:hint="Description"
+        android:hint="@string/description"
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:maxLines="5"
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/ic_date"
         android:focusable="false"
-        android:hint="Creation date"
+        android:hint="@string/creation_date"
         android:importantForAutofill="no"
         android:inputType="date" />
 
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableStart="@drawable/ic_location"
-            android:hint="Place"
+            android:hint="@string/place"
             android:importantForAutofill="no"
             android:inputType="text" />
 
@@ -85,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:contentDescription="GPS Location"
+            android:contentDescription="@string/add_gps_location"
             android:src="@drawable/ic_gps" />
     </LinearLayout>
 
@@ -93,7 +93,7 @@
         android:id="@+id/ivAddedImage"
         android:layout_width="wrap_content"
         android:layout_height="100dp"
-        android:contentDescription="Added image"
+        android:contentDescription="@string/attached_image"
         android:visibility="gone"
         tools:src="@drawable/ic_diary"
         tools:visibility="visible" />
@@ -102,9 +102,9 @@
         android:id="@+id/btnAddImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="GPS Location"
+        android:contentDescription="@string/add_image_button"
         android:drawableStart="@drawable/ic_image"
         android:src="@drawable/ic_gps"
-        android:text="Add image" />
+        android:text="@string/add_image" />
 
 </LinearLayout>
